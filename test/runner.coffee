@@ -3,6 +3,7 @@ _p = phantom
 _p.injectJs(_f.workingDirectory + '/test/lib/jasmine.js')
 _p.injectJs(_f.workingDirectory + '/test/lib/console-runner.js')
 _p.injectJs(_f.workingDirectory + '/src/jet.coffee')
+_p.injectJs(_f.workingDirectory + '/src/node.coffee')
 
 if phantom.args.length == 0
   console.log "Need a spec to run"
@@ -11,7 +12,7 @@ if phantom.args.length == 0
 spec = phantom.args[0]
 
 _p.injectJs(_f.workingDirectory + '/test/specs/' + spec + '_spec.coffee')
- 
+
 console_reporter = new jasmine.ConsoleReporter ->
   _p.exit()
 jasmine.getEnv().addReporter(console_reporter);

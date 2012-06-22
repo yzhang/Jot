@@ -2,7 +2,7 @@
 
 desc "Run tests"
 task :test do
-  system("phantomjs test/specs/jet_spec.coffee")
+  system("phantomjs test/runner.coffee jet")
 end
 
 desc "Compile and concatenate coffee to js."
