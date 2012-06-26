@@ -2,26 +2,23 @@
 
 desc "Run tests"
 task :test do
-  system("phantomjs test/runner.coffee jet")
+  system("phantomjs test/runner.coffee jet helper node template")
 end
 
 desc "Compile and concatenate coffee to js."
 task :compile do
-  Dir.entries('src').each do |entry|
-    path = File.join('src', entry)
-    compile(path) if File.file?(path)
+  sources = ['jet', 'helper', 'node', 'template']
+  dst     = 'lib/jet.coffee'
+  system("rm #{dst}") if File.exist?(dst)
+  system("touch #{dst}")
+
+  sources.each do |source|
+    src = File.join('src', source + ".coffee")
+    system("cat #{src} >> #{dst}")
   end
-end
-
-def compile(path)
-  filename = File.basename(path, ".coffee")
-  coffee   = File.join('src', filename + '.coffee')
-  system("coffee -c #{coffee}")
-
-  src      = File.join('src', filename + '.js')
-  dst      = File.join('lib', filename + '.js')
-  File.delete(dst) if File.exist?(dst)
-  system("mv #{src} #{dst}")
+  
+  system("coffee -c #{dst}")
+  system("rm #{dst}")
 end
 
 task :default => [:test]

@@ -1,31 +1,134 @@
-Jet.Node = class Node
-  @hooks = 
-    doctype: -> "<!DOCTYPE html>\n"
+# substracted from Spine
+Jet.Module = class Module
+  @moduleKeywords = ['included', 'extended']
+  @include: (obj) ->
+    throw new Error('include(obj) requires obj') unless obj
+    for key, value of obj when key not in @moduleKeywords
+      @::[key] = value
+    obj.included?.apply(this)
+    this
 
-  constructor: (@tag, @indention, @id='', @classes='', @content='', @attrs='') ->
-    @children = []
-    @parent   = null
-    @hooks = Jet.Node.hooks
+  # @extend: (obj) ->
+  #   throw new Error('extend(obj) requires obj') unless obj
+  #   for key, value of obj when key not in moduleKeywords
+  #     @[key] = value
+  #   obj.extended?.apply(this)
+  #   this
+
+Jet.Node = class Node extends Jet.Module
+  @include Jet.Helper
+  @hooks = 
+    doctype: -> "<!DOCTYPE html>"
   
+  @Tags = ['a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'command', 'datalist', 'dd', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'doctype', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'keygen', 'kbd', 'label', 'legend', 'li', 'link', 'map', 'mark', 'menu', 'meta', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'small', 'source', 'span', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track', 'u', 'ul', 'var', 'video', 'wbr']
+  @VoidTags = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr']
+
+  constructor: (@indention, src='') ->
+    @children = []
+
+    result = src.match(/^(([\.#]?([a-zA-Z]|\{\{[^\{]*\}\})(([a-zA-Z0-9-_]|\{\{[^\{]*\}\})*))+)(\((.*)\))?(:?$|\s+(.*)$)/)
+    throw "SyntaxError in line: " + src if !result
+
+    selector = result[1]
+    @attrs   = result[7]
+    @mode    = if result[8] == ':' then 'plain' else 'node'
+    @content = result[9]
+    
+    @tag = (selector.match(/^[a-zA-Z\{\}][\{\}a-zA-Z0-9-_]*/) || ['div'])[0]
+    throw "SyntaxError: Illegel tag name " + @tag if Node.Tags.indexOf(@tag) == -1    
+    
+    @voidElement = true if Node.VoidTags.indexOf(@tag) != -1
+    throw "SyntaxError: void element can't contain content" if !@isBlank(@content) && @voidElement
+
+    ids = (selector.match(/#[a-zA-Z\{\}][\{\}a-zA-Z0-9-_]*/g) || [''])
+    if ids instanceof Array && ids.length > 1
+      throw "SyntaxError: One tag should only have one id"
+    
+    @id = ids[0].slice(1)
+    
+    @classes = (selector.match(/\.[a-zA-Z\{\}][\{\}a-zA-Z0-9-_]*/g) || [''])
+    @classes = @classes.join(' ').replace(/\./g, '')
+    
+    @compile()
+
   addChild: (child) ->
+    throw "SyntaxError: void element can't contain child element" if @voidElement
     @children.push(child)
     child.parent = @
 
-  render: (obj) ->
-    return @hooks[@tag](obj) if @hooks[@tag]
-    
-    indention = '' 
-    (indention += ' ' for i in [0..@indention-1]) if @indention > 0
+  compile: ->
+    return Jet.Node.hooks[@tag](obj) if Jet.Node.hooks[@tag]
 
-    html =  ""
-    html += "#{indention}<#{@tag}"
-    html += " id=\"#{@id}\"" if @id != ''
-    html += " class=\"#{@classes}\"" if @classes != ''
-    html += " " + @attrs if @attrs != ''
-    html += ">"
-    html += @content if @content
-    html += "\n" if @children.length > 0
-    for child in @children
-      html += child.render(obj)
-    html += indention if @children.length > 0
-    html += "</#{@tag}>\n"
+    @head =  ""
+    @tail =  ""
+    @head += "#{@space(@indention)}<#{@tag}"
+    @head += " id=\"#{@id}\"" if @id != ''
+    @head += " class=\"#{@classes}\"" if @classes != ''
+    @head += " " + @attrs if @attrs && @attrs != ''
+    @head += ">"
+    
+    if !@voidElement
+      @head += @content if @content
+      @tail += @space(@indention) if @children.length > 0
+      @tail += "</#{@tag}>"
+  
+  render: (obj) ->
+    @html = @head
+    if @children.length > 0
+      @interpolate(@head, obj) + "\n" + (child.render() for child in @children).join("\n") + "\n" + @interpolate(@tail, obj)
+    else
+      @interpolate(@head + @tail, obj)
+
+Jet.Plain = class Plain extends Jet.Module
+  @include Jet.Helper
+  constructor: (@indention, @content='') ->
+    @mode = 'plain'
+    @compile()
+
+  compile: ->
+    @html = @space(@indention) + @content
+
+  render: (obj) ->
+    return @interpolate(@html, obj)
+
+Jet.Partial = class Plain extends Jet.Module
+  @include Jet.Helper
+  constructor: (@indention, @name) ->
+    @mode = 'partial'
+    @name = @name.match /^\s*[a-zA-Z][a-zA-Z0-9-_]*\s*$/
+    throw "Illegal partial name" unless @name
+
+  render: (obj) ->
+    partial = Jet[@name](obj)
+    return partial unless @indention
+    (line = @space(@indention) + line for line in partial.split("\n")).join("\n")
+
+Jet.Expression = class Expression extends Jet.Module
+  @include Jet.Helper
+  constructor: (@indention, content='') ->
+    @children = []
+    @mode = 'node'
+    result = content.match /(\!)?([a-zA-Z$_][a-zA-Z0-9_$]+)(\?)?/
+    @excal = result[1]
+    @attr  = result[2]
+    @q     = result[3]
+    
+  addChild: (child) ->
+    @children.push(child)
+    child.parent = @
+  
+  eval: (obj, attr) ->
+    val = if typeof obj[attr] == 'function' then obj[attr]() else obj[attr]
+    if @excal then !val else val
+
+  render: (obj) ->
+    val = @eval(obj, @attr)
+    if @q 
+      if val then @renderChildren(obj) else null
+    else if val instanceof Array
+      (@renderChildren(o) for o in val).join('\n')
+    else
+      @renderChildren(val)
+  
+  renderChildren: (obj) ->
+    (child.render(obj) for child in @children).join('\n')
