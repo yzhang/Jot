@@ -1,4 +1,5 @@
-Jet.Template = class Template
+Jet.Template = class Template extends Jet.Module
+  @include Jet.Helper
   constructor: (src) ->
     @roots = []
     @parse(src)
@@ -32,4 +33,4 @@ Jet.Template = class Template
       @nodes[indention] = node
   
   render: (obj) ->
-    (root.render(obj) for root in @roots).join('\n')
+    @compact(root.render(obj) for root in @roots).join('\n')

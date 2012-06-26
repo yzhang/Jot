@@ -116,6 +116,19 @@ describe "Node", ->
     
     node = new Node(0, 'a(title="{{name}}!")  {{name}}  Bang!')
     expect(node.render({name: 'Hi, Paul'})).toBe('<a title="Hi, Paul!">Hi, Paul  Bang!</a>')
+  
+  it "should compile markups at first", ->
+    node = new Node(0, 'p#id.class')
+    expect(node.head).toBe('<p id="id" class="class">')
+    expect(node.tail).toBe('</p>')
+  
+    node = new Node(0, 'img(src="test.png")')
+    expect(node.head).toBe('<img src="test.png">')
+    expect(node.tail).toBe('')
+    
+    node = new Node(0, 'p hello {{name}}')
+    expect(node.head).toBe('<p>hello {{name}}')
+    expect(node.tail).toBe('</p>')
 
 describe "plain", ->
   Plain = Jet.Plain
@@ -153,24 +166,25 @@ describe "expression", ->
   it "should evaluate expression properly", ->
     node = new Expression(0, " test? ")
     node.addChild(new Node(2, "p hello"))
-    expect(node.render({test:'123'})).toBe("  <p>hello</p>")
+    expect(node.render({test:'123'})).toBe("<p>hello</p>")
     expect(node.render({test:false})).toBe(null)
     
     node = new Expression(0, " !test? ")
     node.addChild(new Node(2, "p hello"))
-    expect(node.render({test:false})).toBe("  <p>hello</p>")
+    expect(node.render({test:false})).toBe("<p>hello</p>")
     expect(node.render({test:true})).toBe(null)
-
+  
   it "should expand expression properly", ->
     node = new Expression(0, "test")
-    node.addChild(new Node(2, "p hello"))
-    expect(node.render({test:[true, true]})).toBe("  <p>hello</p>\n  <p>hello</p>")
+    node.addChild(new Node(2, "p Hello, {{name}}"))
+    expect(node.render({test:[{name:'Tom'}, {name:'Bob'}]})).toBe("<p>Hello, Tom</p>\n<p>Hello, Bob</p>")
+    expect(node.render({test: -> [{name:'Tom'}, {name:'Bob'}]})).toBe("<p>Hello, Tom</p>\n<p>Hello, Bob</p>")
   
   it "should eval func properly", ->
     node = new Expression(0, " test? ")
     node.addChild(new Node(2, "p hello"))
-    expect(node.render({test: -> true})).toBe("  <p>hello</p>")
+    expect(node.render({test: -> true})).toBe("<p>hello</p>")
     
     node = new Expression(0, " !test? ")
     node.addChild(new Node(2, "p hello"))
-    expect(node.render({test: -> false})).toBe("  <p>hello</p>")
+    expect(node.render({test: -> false})).toBe("<p>hello</p>")

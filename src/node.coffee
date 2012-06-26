@@ -1,20 +1,3 @@
-# substracted from Spine
-Jet.Module = class Module
-  @moduleKeywords = ['included', 'extended']
-  @include: (obj) ->
-    throw new Error('include(obj) requires obj') unless obj
-    for key, value of obj when key not in @moduleKeywords
-      @::[key] = value
-    obj.included?.apply(this)
-    this
-
-  # @extend: (obj) ->
-  #   throw new Error('extend(obj) requires obj') unless obj
-  #   for key, value of obj when key not in moduleKeywords
-  #     @[key] = value
-  #   obj.extended?.apply(this)
-  #   this
-
 Jet.Node = class Node extends Jet.Module
   @include Jet.Helper
   @hooks = 
@@ -69,13 +52,12 @@ Jet.Node = class Node extends Jet.Module
     
     if !@voidElement
       @head += @content if @content
-      @tail += @space(@indention) if @children.length > 0
       @tail += "</#{@tag}>"
   
   render: (obj) ->
     @html = @head
     if @children.length > 0
-      @interpolate(@head, obj) + "\n" + (child.render() for child in @children).join("\n") + "\n" + @interpolate(@tail, obj)
+      @interpolate(@head, obj) + "\n" + @compact(child.render(obj) for child in @children).join("\n") + "\n" + @space(@indention) + @interpolate(@tail, obj)
     else
       @interpolate(@head + @tail, obj)
 
@@ -119,16 +101,20 @@ Jet.Expression = class Expression extends Jet.Module
   
   eval: (obj, attr) ->
     val = if typeof obj[attr] == 'function' then obj[attr]() else obj[attr]
-    if @excal then !val else val
+    if @excal
+      if val instanceof Array then !val.length else !val
+    else 
+      val
 
   render: (obj) ->
     val = @eval(obj, @attr)
-    if @q 
+    if @q || @excal
       if val then @renderChildren(obj) else null
     else if val instanceof Array
-      (@renderChildren(o) for o in val).join('\n')
+      @compact(@renderChildren(o) for o in val).join('\n')
     else
       @renderChildren(val)
-  
+
   renderChildren: (obj) ->
-    (child.render(obj) for child in @children).join('\n')
+    html = (child.render(obj) for child in @children).join('\n')
+    (line.slice(2, line.length) for line in html.split('\n')).join('\n')
