@@ -1,5 +1,5 @@
 describe "Template", ->
-  Template = Jet.Template
+  Template = Jot.Template
 
   it "should compile source to an array of nodes", ->
     t = new Template("""
@@ -52,10 +52,9 @@ describe "Template", ->
     t = new Template("""
       .book
         p {{title}}
-        - author
-          p {{name}}
-          p
-            a test
+        p {{author.name}}
+        p
+          a test
     """)
     
     book = 

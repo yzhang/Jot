@@ -1,5 +1,5 @@
-Jet.Node = class Node extends Jet.Module
-  @include Jet.Helper
+Jot.Node = class Node extends Jot.Module
+  @include Jot.Helper
   @hooks = 
     doctype: -> "<!DOCTYPE html>"
   
@@ -40,7 +40,7 @@ Jet.Node = class Node extends Jet.Module
     child.parent = @
 
   compile: ->
-    return Jet.Node.hooks[@tag](obj) if Jet.Node.hooks[@tag]
+    return Jot.Node.hooks[@tag](obj) if Jot.Node.hooks[@tag]
 
     @head =  ""
     @tail =  ""
@@ -61,8 +61,8 @@ Jet.Node = class Node extends Jet.Module
     else
       @interpolate(@head + @tail, obj)
 
-Jet.Plain = class Plain extends Jet.Module
-  @include Jet.Helper
+Jot.Plain = class Plain extends Jot.Module
+  @include Jot.Helper
   constructor: (@indention, @content='') ->
     @mode = 'plain'
     @compile()
@@ -73,41 +73,34 @@ Jet.Plain = class Plain extends Jet.Module
   render: (obj) ->
     return @interpolate(@html, obj)
 
-Jet.Partial = class Plain extends Jet.Module
-  @include Jet.Helper
+Jot.Partial = class Plain extends Jot.Module
+  @include Jot.Helper
   constructor: (@indention, @name) ->
     @mode = 'partial'
     @name = @name.match /^\s*[a-zA-Z][a-zA-Z0-9-_]*\s*$/
     throw "Illegal partial name" unless @name
 
   render: (obj) ->
-    partial = Jet[@name](obj)
+    partial = Jot[@name](obj)
     return partial unless @indention
     (line = @space(@indention) + line for line in partial.split("\n")).join("\n")
 
-Jet.Expression = class Expression extends Jet.Module
-  @include Jet.Helper
+Jot.Expression = class Expression extends Jot.Module
+  @include Jot.Helper
   constructor: (@indention, content='') ->
     @children = []
-    @mode = 'node'
-    result = content.match /(\!)?([a-zA-Z$_][a-zA-Z0-9_$]+)(\?)?/
-    @excal = result[1]
-    @attr  = result[2]
-    @q     = result[3]
+    @mode   = 'node'
+    result  = content.match /(\!)?([a-zA-Z$_][a-zA-Z0-9_$]+)(\?)?/
+    @invert = result[1]
+    @attr   = result[2]
+    @q      = result[3]
     
   addChild: (child) ->
     @children.push(child)
     child.parent = @
-  
-  eval: (obj, attr) ->
-    val = if typeof obj[attr] == 'function' then obj[attr]() else obj[attr]
-    if @excal
-      if val instanceof Array then !val.length else !val
-    else 
-      val
 
   render: (obj) ->
-    val = @eval(obj, @attr)
+    val = @eval(obj, @attr, @invert)
     if @q || @excal
       if val then @renderChildren(obj) else null
     else if val instanceof Array

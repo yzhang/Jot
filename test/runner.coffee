@@ -2,7 +2,7 @@ _f = require('fs')
 _p = phantom
 _p.injectJs(_f.workingDirectory + '/test/lib/jasmine.js')
 _p.injectJs(_f.workingDirectory + '/test/lib/console-runner.js')
-_p.injectJs(_f.workingDirectory + '/src/jet.coffee')
+_p.injectJs(_f.workingDirectory + '/src/jot.coffee')
 _p.injectJs(_f.workingDirectory + '/src/helper.coffee')
 _p.injectJs(_f.workingDirectory + '/src/template.coffee')
 _p.injectJs(_f.workingDirectory + '/src/node.coffee')

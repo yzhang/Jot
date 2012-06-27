@@ -1,12 +1,12 @@
 describe "Node", ->
-  Node = Jet.Node
+  Node = Jot.Node
 
   it "contains spec with an expectation", ->
-    expect(typeof Jet.Node).toBe("function")
+    expect(typeof Jot.Node).toBe("function")
   
   it "should parse line into a node object", ->
     node = new Node(0, "p hello")
-    expect(node instanceof Jet.Node).toBe(true)
+    expect(node instanceof Jot.Node).toBe(true)
 
   it "should return null if there's parse error", ->
     expect(-> new Node(0, "$p")).toThrow()
@@ -22,8 +22,8 @@ describe "Node", ->
     node = new Node(0, 'html(lang="en")')
     expect(node.render()).toBe('<html lang="en"></html>')
 
-    node = new Node(0, 'title Jet')
-    expect(node.render()).toBe('<title>Jet</title>')
+    node = new Node(0, 'title Jot')
+    expect(node.render()).toBe('<title>Jot</title>')
 
   it "should parse text properly", ->
     node = new Node(2, "p hello")
@@ -131,7 +131,7 @@ describe "Node", ->
     expect(node.tail).toBe('</p>')
 
 describe "plain", ->
-  Plain = Jet.Plain
+  Plain = Jot.Plain
   it "should render plain text properly", ->
     plain = new Plain(2, 'plain text', '')
     expect(plain.render()).toBe("  plain text")
@@ -143,9 +143,9 @@ describe "plain", ->
     expect(node.render({name: 'Paul'})).toBe('Hello, Paul!')
 
 describe "partial", ->
-  Partial = Jet.Partial
+  Partial = Jot.Partial
   it "should render partial properly", ->
-    Jet('partial', """
+    Jot('partial', """
       ul
         li item1
         li item2
@@ -161,8 +161,8 @@ describe "partial", ->
     """)
 
 describe "expression", ->
-  Expression = Jet.Expression
-  Node       = Jet.Node
+  Expression = Jot.Expression
+  Node       = Jot.Node
   it "should evaluate expression properly", ->
     node = new Expression(0, " test? ")
     node.addChild(new Node(2, "p hello"))

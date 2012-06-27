@@ -1,5 +1,5 @@
 describe 'Helper', ->
-  Helper = Jet.Helper
+  Helper = Jot.Helper
   it "should convert number to space properly", ->
     expect(Helper.space(2)).toBe('  ')
     expect(Helper.space(0)).toBe('')
@@ -7,8 +7,21 @@ describe 'Helper', ->
   it "should interpolate string properly", ->
     expect(Helper.interpolate("{{action}}, {{name}}!", {action: "Welcome", name:"Tom"})).toBe("Welcome, Tom!")
     expect(Helper.interpolate("{{action}}, {{person}}!", {action: "Welcome", name:"Tom"})).toBe("Welcome, !")
+    expect(Helper.interpolate("{{action}}, {{person.name}}!", {action: "Welcome", person:{name:"Tom"}})).toBe("Welcome, Tom!")
     
   it "should compact array properly", ->
     a = Helper.compact([1, null, 2])
     expect(a.length).toBe(2)
     expect(a.indexOf(undefined)).toBe(-1)
+  
+  it "should eval attr recursively", ->
+    post = 
+      title:  'test post'
+      author:
+        name: 'Tom'
+    
+    expect(Helper.eval(post, 'title')).toBe('test post')
+    expect(Helper.eval(post, 'author.name')).toBe('Tom')
+    expect(-> Helper.eval(post, '.author')).toThrow()
+    expect(-> Helper.eval(post, 'author.')).toThrow()
+    expect(Helper.eval(post, 'author.age')).toBe(undefined)

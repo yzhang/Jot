@@ -1,12 +1,12 @@
-Jet = @Jet = (name, str) ->
-  Jet[name] = (obj = {}) ->
+Jot = @Jot = (name, str) ->
+  Jot[name] = (obj = {}) ->
     obj = if obj instanceof Array then obj else [obj]
     t = arguments.callee.t
     (t.render(o) for o in obj).join("\n")
-  Jet[name]['t'] = new Jet.Template(str)
+  Jot[name]['t'] = new Jot.Template(str)
   
 # substracted from Spine
-Jet.Module = class Module
+Jot.Module = class Module
   @moduleKeywords = ['included', 'extended']
   @include: (obj) ->
     throw new Error('include(obj) requires obj') unless obj

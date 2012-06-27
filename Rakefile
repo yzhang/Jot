@@ -2,13 +2,13 @@
 
 desc "Run tests"
 task :test do
-  system("phantomjs test/runner.coffee jet helper node template")
+  system("phantomjs test/runner.coffee jot helper node template")
 end
 
 desc "Compile and concatenate coffee to js."
 task :compile do
-  sources = ['jet', 'helper', 'node', 'template']
-  dst     = 'lib/jet.coffee'
+  sources = ['jot', 'helper', 'node', 'template']
+  dst     = 'lib/jot.coffee'
   system("rm #{dst}") if File.exist?(dst)
   system("touch #{dst}")
 

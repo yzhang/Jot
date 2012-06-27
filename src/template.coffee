@@ -1,5 +1,5 @@
-Jet.Template = class Template extends Jet.Module
-  @include Jet.Helper
+Jot.Template = class Template extends Jot.Module
+  @include Jot.Helper
   constructor: (src) ->
     @roots = []
     @parse(src)
@@ -17,13 +17,13 @@ Jet.Template = class Template extends Jet.Module
       parent    = @nodes[indention-2]
 
       if parent && parent.mode == 'plain' || prefix == ':'
-        node = new Jet.Plain(indention, content)
+        node = new Jot.Plain(indention, content)
       else if prefix == '='
-        node = new Jet.Partial(indention, content)
+        node = new Jot.Partial(indention, content)
       else if prefix == '-'
-        node = new Jet.Expression(indention, content)
+        node = new Jot.Expression(indention, content)
       else
-        node = new Jet.Node(indention, content)
+        node = new Jot.Node(indention, content)
     
       if parent
         parent.addChild(node)
