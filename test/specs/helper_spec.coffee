@@ -19,9 +19,11 @@ describe 'Helper', ->
       title:  'test post'
       author:
         name: 'Tom'
+      comments: []
     
     expect(Helper.eval(post, 'title')).toBe('test post')
     expect(Helper.eval(post, 'author.name')).toBe('Tom')
+    expect(Helper.eval(post, 'comments', true)).toBe(true)
     expect(-> Helper.eval(post, '.author')).toThrow()
     expect(-> Helper.eval(post, 'author.')).toThrow()
     expect(Helper.eval(post, 'author.age')).toBe(undefined)

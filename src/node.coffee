@@ -91,7 +91,7 @@ Jot.Expression = class Expression extends Jot.Module
     @children = []
     @mode   = 'node'
     result  = content.match /(\!)?([a-zA-Z$_][a-zA-Z0-9_$]+)(\?)?/
-    @invert = result[1]
+    @invert = result[1] == '!'
     @attr   = result[2]
     @q      = result[3]
     
@@ -101,7 +101,7 @@ Jot.Expression = class Expression extends Jot.Module
 
   render: (obj) ->
     val = @eval(obj, @attr, @invert)
-    if @q || @excal
+    if @q || @invert
       if val then @renderChildren(obj) else null
     else if val instanceof Array
       @compact(@renderChildren(o) for o in val).join('\n')

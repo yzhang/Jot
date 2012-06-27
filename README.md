@@ -27,7 +27,7 @@ Compile it:
 posts = [
   title: "Sample Post"
   published_at: '2012-06-28'
-  content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus vitae risus vitae lorem iaculis placerat."
+  content: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
   author:
     name: "Tom"
   comments: []
@@ -46,7 +46,7 @@ This will produce:
       <span class="author">Tom</div>
     </div>
     <div class="content">
-      Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Vivamus vitae risus vitae lorem iaculis placerat.
+      Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
     </div>
     <div class="comments">
       No comment yet!
@@ -83,8 +83,8 @@ p:
 All variables put in {{*}} will be evaluated based on the object you privided:
 
 ```coffee
-Jet('sample', 'p Hello, {{name}}!')
-Jet.sample({name: "Jot"})
+Jot('sample', 'p Hello, {{name}}!')
+Jot.sample({name: "Jot"})
 ```
 
 Will produce:
@@ -98,8 +98,8 @@ Will produce:
 Variable also support recurrence:
 
 ```coffee
-Jet('sample', 'p Hello, {{person.name}}!')
-Jet.sample({person: {name:"Jot"}})
+Jot('sample', 'p Hello, {{person.name}}!')
+Jot.sample({person: {name:"Jot"}})
 ```
 Same results:
 
@@ -112,8 +112,8 @@ Same results:
 Function will be executed automatically:
 
 ```coffee
-Jet('sample', 'p Hello, {{name}}!')
-Jet.sample({name: -> "Jot"})
+Jot('sample', 'p Hello, {{name}}!')
+Jot.sample({name: -> "Jot"})
 ```
 
 Still same:
@@ -130,8 +130,8 @@ You can also specify a scope:
 Jot('sample', """
   p
     - person
-      name: {{name}}
-      age:  {{age}}
+      :name: {{name}}
+      :age:  {{age}}
 """)
 Jot.sample({person:{name:'Jot', age:'1'}})
 ```
@@ -181,10 +181,10 @@ If you're missing the if statement, here it is, but in a simpler way:
 Jot('account', """
   .account
     - expired?
-      We're sorry, but your account is expired.
+      :We're sorry, but your account is expired.
     - !expired
       p ...
-"""
+""")
 Jot.account({expired:true})
 ```
 
@@ -204,7 +204,7 @@ Jot('account', """
     p {{comment}}
   - !comments
     p No comments yet.
-"""
+""")
 Jot.account({comments:[]})
 ```
 

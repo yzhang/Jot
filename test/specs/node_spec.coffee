@@ -185,6 +185,6 @@ describe "expression", ->
     node.addChild(new Node(2, "p hello"))
     expect(node.render({test: -> true})).toBe("<p>hello</p>")
     
-    node = new Expression(0, " !test? ")
+    node = new Expression(0, " !test")
     node.addChild(new Node(2, "p hello"))
-    expect(node.render({test: -> false})).toBe("<p>hello</p>")
+    expect(node.render({test: -> []})).toBe("<p>hello</p>")
