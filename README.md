@@ -214,6 +214,31 @@ This will produce:
 <p>No comments yet.</p>
 ```
 
+##Partials##
+
+Jot also support partials:
+
+```coffee
+Jot('comment', 'p {{content}}')
+Jot('comments', """
+  - comments
+    = comment
+""")
+
+comments = [
+  {content: 'comment 1'},
+  {content: 'comment 2'},
+]
+Jot.comments(comments:comments)
+```
+
+This will produce:
+
+```html
+<p>comment 1</p>
+<p>comment 2</p>
+```
+
 #Development#
 
 If you want to contribute, you need install [PhantomJS](http://phantomjs.org/) to run the tests, and [Rake](http://rake.rubyforge.org/) and [CoffeeScript](http://coffeescript.org) to compile the final JS.

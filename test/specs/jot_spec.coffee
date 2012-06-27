@@ -114,3 +114,18 @@ describe "Jot", ->
     expect(Jot.account({comments:[]})).toBe("""
       <p>No comments yet.</p>
     """)
+    
+    Jot('comment', 'p {{content}}')
+    Jot('comments', """
+      - comments
+        = comment
+    """)
+
+    comments = [
+      {content: 'comment 1'},
+      {content: 'comment 2'},
+    ]
+    expect(Jot.comments(comments:comments)).toBe("""
+      <p>comment 1</p>
+      <p>comment 2</p>
+    """)

@@ -77,7 +77,7 @@ Jot.Partial = class Plain extends Jot.Module
   @include Jot.Helper
   constructor: (@indention, @name) ->
     @mode = 'partial'
-    @name = @name.match /^\s*[a-zA-Z][a-zA-Z0-9-_]*\s*$/
+    @name = @name.match(/^\s*([a-zA-Z][a-zA-Z0-9-_]*)\s*$/)[1]
     throw "Illegal partial name" unless @name
 
   render: (obj) ->
