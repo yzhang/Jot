@@ -4,7 +4,9 @@ Jot = @Jot = (name, str) ->
     t = arguments.callee.t
     (t.render(o) for o in obj).join("\n")
   Jot[name]['t'] = new Jot.Template(str)
-  
+
+Jot.toString = -> 'Jot'
+
 # substracted from Spine
 Jot.Module = class Module
   @moduleKeywords = ['included', 'extended']

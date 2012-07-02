@@ -23,7 +23,7 @@ Jot.Node = class Node extends Jot.Module
     @voidElement = true if Node.VoidTags.indexOf(@tag) != -1
     throw "SyntaxError: void element can't contain content" if !@isBlank(@content) && @voidElement
 
-    ids = (selector.match(/#[a-zA-Z\{\}][\{\}a-zA-Z0-9-_]*/g) || [''])
+    ids = (selector.match(/#[a-zA-Z\{\}][\{\}a-zA-Z0-9-$_]*/g) || [''])
     if ids instanceof Array && ids.length > 1
       throw "SyntaxError: One tag should only have one id"
     

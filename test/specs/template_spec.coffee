@@ -12,6 +12,17 @@ describe "Template", ->
     expect(t.roots.length).toBe(2)
     expect(t.roots[0].children.length).toBe(3)
   
+  it "should handle blank line properly", ->
+    t = new Template("""
+      p
+      
+      p
+    """)
+    expect(t.render()).toBe("""
+      <p></p>
+      <p></p>
+    """)
+
   it "should compile plain text properly", ->
     t = new Template("""
       p:
@@ -90,3 +101,14 @@ describe "Template", ->
         <p>No comments yet!</p>
       </div>
     """)
+  
+  # it "should ignore comment line", ->
+  #   t = new Template("""
+  #     ! comment line 1
+  #     ! comment line 2
+  #     p Hi!
+  #   """)
+  #   
+  #   expect(t.render()).toBe("""
+  #     <p>Hi!</p>
+  #   """)

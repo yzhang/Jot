@@ -130,6 +130,10 @@ describe "Node", ->
     expect(node.head).toBe('<p>hello {{name}}')
     expect(node.tail).toBe('</p>')
 
+  it "should parse self properly", ->
+    node = new Node(0, '#node{{$}}')
+    expect(node.render('jot')).toBe('<div id="nodejot"></div>')
+      
 describe "plain", ->
   Plain = Jot.Plain
   it "should render plain text properly", ->
@@ -141,6 +145,10 @@ describe "plain", ->
   it "should parse variable properly", ->
     node = new Plain(0, 'Hello, {{name}}!')
     expect(node.render({name: 'Paul'})).toBe('Hello, Paul!')
+  
+  it "should parse self properly", ->
+    node = new Plain(0, 'Hello, {{$}}!')
+    expect(node.render('Jot')).toBe('Hello, Jot!')
 
 describe "partial", ->
   Partial = Jot.Partial

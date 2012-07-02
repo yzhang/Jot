@@ -2,6 +2,7 @@ describe "Jot", ->
   it "should register template properly", ->
     Jot("simple", "p Hello")
     expect(typeof Jot.simple).toBe('function')
+    expect(Jot.toString()).toBe('Jot')
     expect(Jot['simple'].t instanceof Jot.Template)
   
   it "should render example correctly", ->
@@ -115,11 +116,11 @@ describe "Jot", ->
       <p>No comments yet.</p>
     """)
     
-    Jot('comment', 'p {{content}}')
     Jot('comments', """
       - comments
         = comment
     """)
+    Jot('comment', 'p {{content}}')
 
     comments = [
       {content: 'comment 1'},
@@ -128,4 +129,13 @@ describe "Jot", ->
     expect(Jot.comments(comments:comments)).toBe("""
       <p>comment 1</p>
       <p>comment 2</p>
+    """)
+    
+    Jot('array', """
+      p {{$}}
+    """)
+    
+    expect(Jot.array(['Hi, Tom,', 'Thanks!'])).toBe("""
+      <p>Hi, Tom,</p>
+      <p>Thanks!</p>
     """)

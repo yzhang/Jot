@@ -4,6 +4,12 @@ describe 'Helper', ->
     expect(Helper.space(2)).toBe('  ')
     expect(Helper.space(0)).toBe('')
   
+  it "should return true for blank var", ->
+    expect(Helper.isBlank('')).toBe(true)
+    expect(Helper.isBlank(undefined)).toBe(true)
+    expect(Helper.isBlank([])).toBe(true)
+    expect(Helper.isBlank([''])).not.toBe(true)
+
   it "should interpolate string properly", ->
     expect(Helper.interpolate("{{action}}, {{name}}!", {action: "Welcome", name:"Tom"})).toBe("Welcome, Tom!")
     expect(Helper.interpolate("{{action}}, {{person}}!", {action: "Welcome", name:"Tom"})).toBe("Welcome, !")
@@ -27,3 +33,4 @@ describe 'Helper', ->
     expect(-> Helper.eval(post, '.author')).toThrow()
     expect(-> Helper.eval(post, 'author.')).toThrow()
     expect(Helper.eval(post, 'author.age')).toBe(undefined)
+    expect(Helper.eval('Jot', '$')).toBe('Jot')

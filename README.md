@@ -107,6 +107,24 @@ Same results:
 <p>Hello, Jot!</p>
 ```
 
+###Array###
+
+You can also pass an Array to a template and reference the element with {{$}}:
+
+```coffee
+Jot('sample', """
+  p {{$}}
+""")
+Jot.sample(['Hi, Tom,', 'Thanks!'])
+```
+
+This will produce:
+
+```html
+<p>Hi, Tome,</p>
+<p>Thanks!</p>
+```
+
 ###Function###
 
 Function will be executed automatically:

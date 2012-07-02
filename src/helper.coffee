@@ -1,8 +1,13 @@
 Jot.Helper = 
   space:   (n) -> new Array(n+1).join(' ');
-  isBlank: (o) -> !o || o == ''
+  isBlank: (value) ->
+    return true unless value
+    return false for key of value
+    true
 
   eval: (obj, exp, invert) ->
+    return obj.toString() if exp == '$'
+
     attrs = exp.split('.')
     val = obj
     i = 0;
