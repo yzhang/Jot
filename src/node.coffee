@@ -29,7 +29,7 @@ Jot.Node = class Node extends Jot.Module
     
     @id = ids[0].slice(1)
     
-    @classes = (selector.match(/\.[a-zA-Z\{\}][\{\}a-zA-Z0-9-_]*/g) || [''])
+    @classes = (selector.match(/\.[a-zA-Z\{\}][\{\}a-zA-Z0-9-$_]*/g) || [''])
     @classes = @classes.join(' ').replace(/\./g, '')
     
     @compile()

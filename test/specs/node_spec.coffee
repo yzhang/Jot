@@ -133,6 +133,9 @@ describe "Node", ->
   it "should parse self properly", ->
     node = new Node(0, '#node{{$}}')
     expect(node.render('jot')).toBe('<div id="nodejot"></div>')
+    
+    node = new Node(0, '.node{{$}}')
+    expect(node.render('jot')).toBe('<div class="nodejot"></div>')
       
 describe "plain", ->
   Plain = Jot.Plain
