@@ -90,8 +90,8 @@ Jot.Expression = class Expression extends Jot.Module
   constructor: (@indention, content='') ->
     @children = []
     @mode   = 'node'
-    result  = content.match /(\!)?([a-zA-Z$_][a-zA-Z0-9_$]+)(\?)?/
-    @invert = result[1] == '!'
+    result  = content.match /(\!)?([a-zA-Z$_][a-zA-Z0-9_$\.]+)(\?)?/
+    @invert = (result[1] == '!')
     @attr   = result[2]
     @q      = result[3]
     

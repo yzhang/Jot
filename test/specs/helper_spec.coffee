@@ -26,8 +26,10 @@ describe 'Helper', ->
       author:
         name: 'Tom'
       comments: []
+      closed: false
     
     expect(Helper.eval(post, 'title')).toBe('test post')
+    expect(Helper.eval(post, 'closed', true)).toBe(true)
     expect(Helper.eval(post, 'author.name')).toBe('Tom')
     expect(Helper.eval(post, 'comments', true)).toBe(true)
     expect(-> Helper.eval(post, '.author')).toThrow()
