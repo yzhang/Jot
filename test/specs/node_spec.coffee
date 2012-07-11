@@ -171,6 +171,11 @@ describe "partial", ->
     \ \ </ul>
     """)
 
+  it "should parse partial name properly", ->
+    Jot('partial', ":partial")
+    partial = new Partial(2, '{{partial}}')
+    expect(partial.render({partial:'partial'})).toBe("  partial")
+
 describe "expression", ->
   Expression = Jot.Expression
   Node       = Jot.Node

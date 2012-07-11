@@ -73,15 +73,16 @@ Jot.Plain = class Plain extends Jot.Module
   render: (obj) ->
     return @interpolate(@html, obj)
 
-Jot.Partial = class Plain extends Jot.Module
+Jot.Partial = class Partial extends Jot.Module
   @include Jot.Helper
   constructor: (@indention, @name) ->
     @mode = 'partial'
-    @name = @name.match(/^\s*([a-zA-Z][a-zA-Z0-9-_]*)\s*$/)[1]
+    @name = @name.match(/^\s*([a-zA-Z\{][\{\}a-zA-Z0-9-_]*)\s*$/)[1]
     throw "Illegal partial name" unless @name
 
   render: (obj) ->
-    partial = Jot[@name](obj)
+    partialName = @interpolate(@name, obj)
+    partial = Jot[partialName](obj)
     return partial unless @indention
     (line = @space(@indention) + line for line in partial.split("\n")).join("\n")
 
