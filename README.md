@@ -273,7 +273,7 @@ Compile:
 rake compile
 ```
 
-Jot also used [Jasmine](http://pivotal.github.com/jasmine/) and [Phantom-Jasmine](https://github.com/jcarver989/phantom-jasmine)'s consoler runner.
+Jot also used [Jasmine](https://jasmine.github.io/) and [Phantom-Jasmine](https://github.com/jcarver989/phantom-jasmine)'s consoler runner.
 
 #License#
 (The MIT License)
